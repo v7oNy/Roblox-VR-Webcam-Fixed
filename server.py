@@ -22,9 +22,8 @@ poses = {} # key: "username" value: "dictionary containing pose data"
 temp_keys = [] # list of temporary keys {value: "", expiry: ""}
 
 def remove_old_keys():
-    for i,token in enumerate(temp_keys):
-        if time.time() > token["expiry"]:
-            temp_keys.pop(i)
+    now = time.time()
+    temp_keys[:] = [token for token in temp_keys if now <= token["expiry"]]
 
 @app.route('/download_poses/', methods = ['GET']) # download all poses for all players
 def download_poses():
