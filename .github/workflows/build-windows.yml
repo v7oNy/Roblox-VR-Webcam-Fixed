@@ -36,6 +36,7 @@ jobs:
             "authorization": "CI-Test",
             "upload_url": "http://127.0.0.1:9/upload_pose/{username}",
             "camera_index": 999,
+          "smoke_test": true,
             "cooldown": 0.2
           }
           '@ | Set-Content -Path "dist\config.json" -Encoding UTF8
