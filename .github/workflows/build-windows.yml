@@ -27,6 +27,27 @@ jobs:
         run: |
           pyinstaller --noconfirm --clean --onefile --windowed --name Roblox-Webcam-VR main.py
 
+      - name: Smoke test EXE startup
+        shell: powershell
+        run: |
+          @'
+          {
+            "username": "CI-Test",
+            "authorization": "CI-Test",
+            "upload_url": "http://127.0.0.1:9/upload_pose/{username}",
+            "camera_index": 999,
+            "cooldown": 0.2
+          }
+          '@ | Set-Content -Path "dist\config.json" -Encoding UTF8
+          $p = Start-Process -FilePath "dist\Roblox-Webcam-VR.exe" -PassThru
+          if (-not $p.WaitForExit(30000)) {
+            $p.Kill()
+            throw "EXE did not exit within 30 seconds during startup smoke test."
+          }
+          if ($p.ExitCode -ne 0) {
+            throw "EXE startup smoke test failed with exit code $($p.ExitCode)."
+          }
+
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
