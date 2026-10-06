@@ -1,9 +1,10 @@
 import os
+import sys
 import json
 import time
 import threading
 
-CONFIG_FILE = "config.json"
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(sys.executable if getattr(sys, "frozen", False) else __file__)), "config.json")
 
 
 def load_config():
