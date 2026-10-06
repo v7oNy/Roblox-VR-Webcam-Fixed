@@ -1,4 +1,5 @@
 mediapipe # requires opencv-python and numpy anyway
+requests
 PyDirectInput
 flask
 waitress
