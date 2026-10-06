@@ -1,0 +1,7 @@
+{
+    "username": "MyRobloxUsername",
+    "authorization": "CHANGE-ME",
+    "upload_url": "https://www.example.com/upload_pose/{username}",
+    "camera_index": 0,
+    "cooldown": 0.2
+}
