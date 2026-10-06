@@ -13,7 +13,8 @@ def load_config():
         "authorization": "CHANGE-ME",
         "upload_url": "https://www.example.com/upload_pose/{username}",
         "camera_index": 0,
-        "cooldown": 0.2
+        "cooldown": 0.2,
+        "smoke_test": false
     }
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
@@ -168,10 +169,15 @@ def main():
     global sequence_num
     global sent_data
 
+    if bool(config.get("smoke_test", False)):
+        print("Smoke test mode: imports and configuration loaded successfully.")
+        return
+
     print("Opening the webcam...")
     cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
     if not cap.isOpened():
         print(f"Could not open camera index {camera_index}. Change camera_index in config.json and restart.")
+        sequence_num = 0
         return
 
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
