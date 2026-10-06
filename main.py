@@ -1,4 +1,4 @@
-import subprocess
+import os
 import json
 import time
 import threading
@@ -11,10 +11,11 @@ username = "MyRobloxUsername"
 authorization = "CHANGE-ME"
 # SERVER OWNERS: move {username} to wherever the player's username should be inserted into the URL. 
 # PLAYERS: this value should be given from the roblox game.
-upload_url = f"https://www.example.com/upload_pose/{username}" 
+upload_url = config["upload_url"].replace("{username}", username) 
 
 # how long in seconds between each pose update (less seconds = more data uploaded to server = lag)
-cooldown = 0.2
+cooldown = float(config.get("cooldown", 0.2))
+camera_index = int(config.get("camera_index", 0))
 # are we using the typing input feature (True/False case-sensitive)?
 typing_input = False
 
@@ -51,20 +52,13 @@ ending_char = 'c'
 # are we uploading to the server or only testing the pose tracking?
 uploading = True
 
-while True:  # automatically download missing dependencies
-    try:
-        import requests as rq
-        import mediapipe as mp  # mediapipe depends on opencv
-        import cv2  # which depends on numpy
-        import numpy as np
-        import pydirectinput
-        import calcs
-        pydirectinput.PAUSE = press_delay  # short keypress delay
-        break
-    except ImportError as e:
-        print("Missing 1 or more dependencies.", e)
-        print("Downloading dependencies now.")
-        subprocess.run("python -m pip install -r requirements.txt", shell=True)
+import requests as rq
+import mediapipe as mp  # mediapipe depends on opencv
+import cv2  # which depends on numpy
+import numpy as np
+import pydirectinput
+import calcs
+pydirectinput.PAUSE = press_delay  # short keypress delay
 
 roblox_rotations = {}
 roblox_landmarks = {}
@@ -170,7 +164,10 @@ def main():
     global sent_data
 
     print("Opening the webcam...")
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+    if not cap.isOpened():
+        print(f"Could not open camera index {camera_index}. Change camera_index in config.json and restart.")
+        return
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     print("Initializing pose detection...")
